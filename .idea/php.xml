@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/../wordpress-6.3.1-de_DE" />
+      <path value="$PROJECT_DIR$/../wordpress-6.3.1-de_DE/wordpress/wp-content/plugins/elementor" />
+      <path value="$PROJECT_DIR$/../wordpress-6.3.1-de_DE/wordpress/wp-content/plugins/elementor-pro" />
+    </include_path>
+  </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.0" />
+</project>

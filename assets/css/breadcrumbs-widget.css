@@ -1,0 +1,42 @@
+.elementor-widget-breadcrumbs-for-elementor .breadcrumbs {
+    color: var(--breadcrumbs-for-elementor-color, #000);
+}
+
+.elementor-widget-breadcrumbs-for-elementor .breadcrumbs ol, .elementor-widget-breadcrumbs-for-elementor .breadcrumbs ol li{
+    display: flex;
+    gap: var(--breadcrumbs-for-elementor-gap, 10px);
+    padding: 0;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.elementor-widget-breadcrumbs-for-elementor .breadcrumbs ol{
+    flex-wrap: wrap;
+}
+
+.elementor-widget-breadcrumbs-for-elementor .breadcrumbs a {
+    color: var(--breadcrumbs-for-elementor-color, #000);
+    text-decoration: none;
+    transition: color .3s linear;
+}
+
+.elementor-widget-breadcrumbs-for-elementor .breadcrumbs a:hover {
+    color: var(--breadcrumbs-for-elementor-color-hover, #000);
+}
+
+.elementor-widget-breadcrumbs-for-elementor .breadcrumbs span[aria-current] {
+    color: var(--breadcrumbs-for-elementor-color-active, var(--breadcrumbs-for-elementor-color, #000));
+}
+
+.elementor-widget-breadcrumbs-for-elementor .breadcrumbs i,.elementor-widget-breadcrumbs-for-elementor .breadcrumbs svg{
+    font-size: var(--breadcrumbs-for-elementor-icon-size, 16px);
+    width: var(--breadcrumbs-for-elementor-icon-size, 16px);
+    height: var(--breadcrumbs-for-elementor-icon-size, 16px);
+    color: var(--breadcrumbs-for-elementor-icon-color, #000);
+    fill: var(--breadcrumbs-for-elementor-icon-color, #000);
+    transform: translateY(var(--breadcrumbs-for-elementor-icon-translatey, 0));
+}
+
+.elementor-widget-breadcrumbs-for-elementor .breadcrumbs ol li{
+    list-style: none;
+}
