@@ -7,6 +7,10 @@ use BCFE\Breadcrumbs;
 
 class Elementor_Breadcrumbs_Widget extends Widget_Base
 {
+    protected function is_dynamic_content(): bool
+    {
+        return false;
+    }
 
     public function get_name()
     {
@@ -52,6 +56,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
                 'label_off' => esc_html__('Hide', 'elementor'),
                 'return_value' => 'yes',
                 'default' => 'yes',
+                "render_type" => "template"
             ]
         );
 
@@ -64,7 +69,8 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
                 'placeholder' => esc_html__('Choose the name to be displayed for the frontpage', 'breadcrumbs-for-elementor'),
                 'condition' => [
                     "show_homepage" => "yes"
-                ]
+                ],
+                "render_type" => "template"
             ]
         );
 
@@ -78,6 +84,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
                     'library' => 'fa-solid',
                 ],
                 'skin' => "inline",
+                "render_type" => "template"
             ]
         );
 
@@ -98,6 +105,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
                 'name' => 'breadcrumbs_typography',
                 'label' => esc_html__('Breadcrumbs Typography', 'elementor-breadcrumbs-widget'),
                 'selector' => '{{WRAPPER}} .breadcrumbs',
+                "render_type" => "none"
             ]
         );
 
@@ -120,6 +128,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
                 'selectors' => [
                     '{{WRAPPER}}' => '--breadcrumbs-for-elementor-color: {{VALUE}};',
                 ],
+                "render_type" => "none"
             ]
         );
 
@@ -140,6 +149,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
                 'selectors' => [
                     '{{WRAPPER}}' => '--breadcrumbs-for-elementor-color-hover: {{VALUE}};',
                 ],
+                "render_type" => "none"
             ]
         );
 
@@ -160,6 +170,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
                 'selectors' => [
                     '{{WRAPPER}}' => '--breadcrumbs-for-elementor-color-active: {{VALUE}};'
                 ],
+                "render_type" => "none"
             ]
         );
 
@@ -192,6 +203,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
                 'selectors' => [
                     '{{WRAPPER}}' => '--breadcrumbs-for-elementor-icon-size: {{SIZE}}{{UNIT}};',
                 ],
+                "render_type" => "none"
             ]
         );
 
@@ -202,7 +214,8 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}}' => '--breadcrumbs-for-elementor-icon-color: {{VALUE}};',
-                ]
+                ],
+                "render_type" => "none"
             ]
         );
 
@@ -259,14 +272,20 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->end_controls_section();
     }
 
-    protected function get_breadcrumbs()
+    protected function get_breadcrumbs(): array
     {
-        if(defined('THE_SEO_FRAMEWORK_PRESENT')){
-            return \The_SEO_Framework\Meta\Breadcrumbs::get_breadcrumb_list();
-        }else{
-            return Breadcrumbs::get_breadcrumb_list();
+        $args = null;
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && isset($_POST["editor_post_id"])) {
+            $args = [
+                    "id" => $_POST["editor_post_id"]
+            ];
         }
+        // Check if not in edit mode or if cached crumbs are empty
+        return defined('THE_SEO_FRAMEWORK_PRESENT') && false ?
+            \The_SEO_Framework\Meta\Breadcrumbs::get_breadcrumb_list($args)
+    : Breadcrumbs::get_breadcrumb_list($args);
     }
+
 
     protected function render()
     {
@@ -279,8 +298,10 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $count = count($crumbs);
         $items = [];
 
-        if($show_homepage){
+        if ($show_homepage) {
             $crumbs[0]['name'] = $title_homepage;
+        }else{
+            unset($crumbs[0]);
         }
 
         if (1 === $count) {
@@ -305,7 +326,8 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
             }
         } ?>
 
-        <nav class="breadcrumbs" aria-label="Breadcrumbs" data-crumbs="<?= esc_attr(json_encode($items)) ?>" data-settings="<?= esc_attr(json_encode($settings)) ?>">
+        <nav class="breadcrumbs" aria-label="Breadcrumbs" data-crumbs="<?= esc_attr(json_encode($items)) ?>"
+             data-settings="<?= esc_attr(json_encode($settings)) ?>">
             <ol>
                 <?php foreach ($items as $index => $item): ?>
                     <li class="breadcrumbs-item">
@@ -320,50 +342,41 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         <?php
     }
 
-    protected function content_template() {
+    protected function content_template()
+    {
         ?>
         <#
-        var settings = settings,
-        show_homepage = settings.show_homepage === 'yes',
+        var show_homepage = settings.show_homepage === 'yes',
         title_homepage = settings.title_homepage,
         crumbs = <?php echo json_encode($this->get_breadcrumbs()); ?>,
-        items = [],
-        iconHTML = elementor.helpers.renderIcon( view, settings.divider_icon, { 'aria-hidden': true }, 'i' , 'object' );;
+        iconHTML = elementor.helpers.renderIcon(view, settings.divider_icon, { 'aria-hidden': true }, 'i', 'object');
 
         if (show_homepage) {
-            crumbs[0]['name'] = _.escape(title_homepage);
-        }else{
-            crumbs.splice(0,1);
+        crumbs[0]['name'] = title_homepage;
+        } else {
+        crumbs.splice(0, 1);
         }
 
         var count = crumbs.length;
-        console.log(crumbs);
-        if (1 === count) {
-        items.push('<span aria-current="page">' + crumbs[0].name + '</span>');
-        } else {
-        _.each(crumbs, function(crumb, i) {
-        if ((count - 1) === i) {
-        items.push('<span aria-current="page">' + crumb.name + '</span>');
-        } else {
-        items.push('<a href="' + _.escape(crumb.url) + '">' + _.escape(crumb.name) + '</a>');
-        }
-        });
-        }
-        console.log(items);
         #>
 
-        <nav class="breadcrumbs" aria-label="Breadcrumbs" data-crumbs="{{ JSON.stringify(items) }}" data-settings="{{ JSON.stringify(settings) }}">
+        <nav class="breadcrumbs" aria-label="Breadcrumbs">
             <ol>
-                <# _.each(items, function(item, index) { #>
+                <# for (let i = 0; i < count; i++) {
+                let crumb = crumbs[i];
+                #>
                 <li class="breadcrumbs-item">
-                    {{{ item }}}
-                    <# if (index < items.length - 1) { #>
+                    <# if ((count - 1) === i) { #>
+                    <span aria-current="page">{{{ _.escape(crumb.name) }}}</span>
+                    <# } else { #>
+                    <a href="{{{ _.escape(crumb.url) }}}">{{{ _.escape(crumb.name) }}}</a>
                     {{{ iconHTML.value }}}
                     <# } #>
                 </li>
-                <# }); #>
             </ol>
         </nav>
         <?php
     }
+
+
 }
