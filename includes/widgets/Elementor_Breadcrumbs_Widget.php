@@ -2,10 +2,13 @@
 
 namespace BCFE\Widgets;
 
-use \Elementor\Widget_Base;
 use BCFE\Breadcrumbs;
 
-class Elementor_Breadcrumbs_Widget extends Widget_Base
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+
+class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
 {
     protected function is_dynamic_content(): bool
     {
@@ -19,7 +22,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
 
     public function get_title()
     {
-        return esc_html__('Breadcrumbs', 'elementor-breadcrumbs-widget');
+        return esc_html__('Breadcrumbs', 'breadcrumbs-for-elementor');
     }
 
     public function get_icon()
@@ -54,7 +57,6 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
                 "id" => $_POST["editor_post_id"]
             ];
         }
-        // Check if not in edit mode or if cached crumbs are empty
         return defined('THE_SEO_FRAMEWORK_PRESENT') && false ?
             \The_SEO_Framework\Meta\Breadcrumbs::get_breadcrumb_list($args)
             : Breadcrumbs::get_breadcrumb_list($args);
@@ -78,28 +80,27 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         }
 
         $count = count($crumbs);
-        ?>
-
-        <nav class="breadcrumbs" aria-label="Breadcrumbs" data-crumbs="<?= esc_attr(json_encode($crumbs)) ?>"
-             data-settings="<?= esc_attr(json_encode($settings)) ?>">
-            <ol>
-                <?php foreach ($crumbs as $i => $crumb): ?>
-                    <li class="breadcrumbs-item">
-                        <?php if (($count - 1) === $i): ?>
-                            <span aria-current="page"><?= esc_html($crumb['name']); ?></span>
-                        <?php else: ?>
-                            <a href="<?= esc_url($crumb['url']); ?>"><?= esc_html($crumb['name']); ?></a>
-                            <?php if ($is_divider_icon): ?>
-                                <?php \Elementor\Icons_Manager::render_icon($divider_icon, ['aria-hidden' => 'true']); ?>
+        if (!empty($crumbs)):?>
+            <nav class="breadcrumbs" aria-label="Breadcrumbs" data-crumbs="<?= esc_attr(json_encode($crumbs)) ?>"
+                 data-settings="<?= esc_attr(json_encode($settings)) ?>">
+                <ol>
+                    <?php foreach ($crumbs as $i => $crumb): ?>
+                        <li class="breadcrumbs-item">
+                            <?php if (($count - 1) === $i): ?>
+                                <span aria-current="page"><?= esc_html($crumb['name']); ?></span>
                             <?php else: ?>
-                                <span class="divider-text"><?= esc_html($divider_text); ?></span>
+                                <a href="<?= esc_url($crumb['url']); ?>"><?= esc_html($crumb['name']); ?></a>
+                                <?php if ($is_divider_icon): ?>
+                                    <?php \Elementor\Icons_Manager::render_icon($divider_icon, ['aria-hidden' => 'true']); ?>
+                                <?php else: ?>
+                                    <span class="divider-text"><?= esc_html($divider_text); ?></span>
+                                <?php endif; ?>
                             <?php endif; ?>
-                        <?php endif; ?>
-                    </li>
-                <?php endforeach; ?>
-            </ol>
-        </nav>
-        <?php
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+            </nav>
+        <?php endif;
     }
 
 
@@ -122,30 +123,30 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         }
 
         var count = crumbs.length;
-        #>
-
-        <nav class="breadcrumbs" aria-label="Breadcrumbs">
-            <ol>
-                <# for (let i = 0; i < count; i++) {
-                let crumb = crumbs[i];
-                #>
-                <li class="breadcrumbs-item">
-                    <# if ((count - 1) === i) { #>
-                    <span aria-current="page">{{{ _.escape(crumb.name) }}}</span>
-                    <# } else { #>
-                    <a href="{{{ _.escape(crumb.url) }}}">{{{ _.escape(crumb.name) }}}</a>
-                    <# if (!isDividerIcon) { #>
-                    <span class="divider-text">
-                        <# } #>
-                            {{{ divider.value }}}
+        if(count.length){ #>
+            <nav class="breadcrumbs" aria-label="Breadcrumbs">
+                <ol>
+                    <# for (let i = 0; i < count; i++) {
+                    let crumb = crumbs[i];
+                    #>
+                    <li class="breadcrumbs-item">
+                        <# if ((count - 1) === i) { #>
+                        <span aria-current="page">{{{ _.escape(crumb.name) }}}</span>
+                        <# } else { #>
+                        <a href="{{{ _.escape(crumb.url) }}}">{{{ _.escape(crumb.name) }}}</a>
                         <# if (!isDividerIcon) { #>
-                            </span>
+                        <span class="divider-text">
+                                <# } #>
+                                    {{{ divider.value }}}
+                                <# if (!isDividerIcon) { #>
+                                    </span>
+                        <# } #>
+                        <# } #>
+                    </li>
                     <# } #>
-                    <# } #>
-                </li>
-                <# } #>
-            </ol>
-        </nav>
+                </ol>
+            </nav>
+        <# } #>
         <?php
     }
 
@@ -154,14 +155,14 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->start_controls_section(
             'section_content',
             [
-                'label' => esc_html__('Content', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Content', 'breadcrumbs-for-elementor'),
             ]
         );
 
         $this->add_control(
             'show_homepage',
             [
-                'label' => esc_html__('Show Homepage', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Show Homepage', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
                 'label_on' => esc_html__('Show', 'elementor'),
                 'label_off' => esc_html__('Hide', 'elementor'),
@@ -188,7 +189,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->add_control(
             'divider_icon_or_text',
             [
-                'label' => esc_html__('Divider Type', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Divider Type', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
                 'label_on' => esc_html__('Icon', 'elementor'),
                 'label_off' => esc_html__('Text', 'elementor'),
@@ -201,7 +202,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->add_control(
             'divider_icon',
             [
-                'label' => esc_html__('Divider Icon', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Divider Icon', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::ICONS,
                 'default' => [
                     'value' => 'fas fa-angle-right',
@@ -217,7 +218,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->add_control(
             'divider_text',
             [
-                'label' => esc_html__('Divider Icon', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Divider Icon', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => ">",
                 'placeholder' => esc_html__('Text displayed between breadcrumb items', 'breadcrumbs-for-elementor'),
@@ -237,7 +238,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->start_controls_section(
             'section_style',
             [
-                'label' => esc_html__('Style', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Style', 'breadcrumbs-for-elementor'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
             ]
         );
@@ -246,7 +247,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
             \Elementor\Group_Control_Typography::get_type(),
             [
                 'name' => 'breadcrumbs_typography',
-                'label' => esc_html__('Breadcrumbs Typography', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Breadcrumbs Typography', 'breadcrumbs-for-elementor'),
                 'selector' => '{{WRAPPER}} .breadcrumbs',
             ]
         );
@@ -265,7 +266,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->add_control(
             'breadcrumbs_color',
             [
-                'label' => esc_html__('Breadcrumbs Color', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Breadcrumbs Color', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}}' => '--breadcrumbs-for-elementor-color: {{VALUE}};',
@@ -285,7 +286,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->add_control(
             'breadcrumbs_color_hover',
             [
-                'label' => esc_html__('Breadcrumbs Color', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Breadcrumbs Color', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}}' => '--breadcrumbs-for-elementor-color-hover: {{VALUE}};',
@@ -305,7 +306,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->add_control(
             'breadcrumbs_color_active',
             [
-                'label' => esc_html__('Breadcrumbs Color', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Breadcrumbs Color', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}}' => '--breadcrumbs-for-elementor-color-active: {{VALUE}};'
@@ -353,7 +354,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
             \Elementor\Group_Control_Typography::get_type(),
             [
                 'name' => 'divider_typography',
-                'label' => esc_html__('Divider Typography', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Divider Typography', 'breadcrumbs-for-elementor'),
                 'selector' => '{{WRAPPER}} .breadcrumbs .divider-text',
                 "condition" => [
                     "divider_icon_or_text!" => "icon"
@@ -364,7 +365,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->add_control(
             'divider_color',
             [
-                'label' => esc_html__('Divider Color', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Divider Color', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}}' => '--breadcrumbs-for-elementor-divider-color: {{VALUE}};',
@@ -402,7 +403,7 @@ class Elementor_Breadcrumbs_Widget extends Widget_Base
         $this->add_responsive_control(
             'icon_vertical_correction',
             [
-                'label' => esc_html__('Icon Vertical Adjustment', 'elementor-breadcrumbs-widget'),
+                'label' => esc_html__('Icon Vertical Adjustment', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::SLIDER,
                 'size_units' => ['px', '%', 'em', 'rem', 'custom'],
                 'range' => [

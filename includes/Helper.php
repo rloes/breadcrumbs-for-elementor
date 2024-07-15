@@ -6,9 +6,6 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-use BCFE\Sanitize;
-
-
 class Helper
 {
     /**
@@ -276,7 +273,7 @@ class Helper
          * @since 5.0.0
          */
         static::$pt_memo[$post_id][$taxonomy] = \apply_filters(
-            'the_seo_framework_primary_term',
+            'breadcrumbs_for_elementor_primary_term',
             $primary_term,
             $post_id,
             $taxonomy,
@@ -484,7 +481,7 @@ class Helper
          * @since 4.2.0 Now supports the `$args['pta']` index.
          */
         $title = (string)\apply_filters(
-            'the_seo_framework_title_from_generation',
+            'breadcrumbs_for_elementor_title_from_generation',
             $title ?: static::get_untitled_title(),
             $args,
         );
@@ -575,7 +572,7 @@ class Helper
          * @since 5.0.0
          */
         return \apply_filters(
-            'the_seo_framework_generated_archive_title_items',
+            'breadcrumbs_for_elementor_generated_archive_title_items',
             [
                 $title,
                 $prefix,
@@ -782,7 +779,7 @@ class Helper
                  * @since 4.2.8
                  */
                 (array)\apply_filters(
-                    'the_seo_framework_public_post_type_archives',
+                    'breadcrumbs_for_elementor_public_post_type_archives',
                     array_values(
                         array_filter(
                             static::get_all_public(),
@@ -817,7 +814,7 @@ class Helper
                  * @since 4.2.0
                  */
                 (array)\apply_filters(
-                    'the_seo_framework_public_post_types',
+                    'breadcrumbs_for_elementor_public_post_types',
                     array_values(array_filter(
                         array_unique(array_merge(
                             static::get_all_forced_supported(),
@@ -848,7 +845,7 @@ class Helper
          * @since 3.1.0
          */
         return (array)\apply_filters(
-            'the_seo_framework_forced_supported_post_types',
+            'breadcrumbs_for_elementor_forced_supported_post_types',
             array_values(\get_post_types([
                 'public' => true,
                 '_builtin' => true,
@@ -1067,7 +1064,7 @@ class Helper
          * @since 2.5.2
          */
             (string)\apply_filters(
-                'the_seo_framework_404_title',
+                'breadcrumbs_for_elementor_404_title',
                 \__('Page not found', 'default')
             )
         );
@@ -1568,7 +1565,7 @@ class Helper
          * @since 2.8.0
          * @param string $scheme The current URL scheme.
          */
-        return static::memo( (string) \apply_filters( 'the_seo_framework_preferred_url_scheme', $scheme ) );
+        return static::memo( (string) \apply_filters( 'breadcrumbs_for_elementor_preferred_url_scheme', $scheme ) );
     }
 
     /**

@@ -5,18 +5,10 @@
  */
 
 namespace BCFE;
-use BCFE\{
-    Helper,
-    Query
-};
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
-
-use \The_SEO_Framework\{
-    Meta,
-};
-
 /**
  * The SEO Framework plugin
  * Copyright (C) 2023 - 2024 Sybre Waaijer, CyberWire B.V. (https://cyberwire.nl/)
@@ -172,7 +164,7 @@ class Breadcrumbs
     /**
      * Gets a list of breadcrumbs for a singular object.
      *
-     * @param ?int\WP_Post $id The post ID or post object. Leave null to autodetermine.
+     * @param ?int | \WP_Post $id The post ID or post object. Leave null to autodetermine.
      * @return array[] The breadcrumb list : {
      *    string url:  The breadcrumb URL.
      *    string name: The breadcrumb page title.
@@ -218,7 +210,7 @@ class Breadcrumbs
 
             foreach (array_reverse($ancestors) as $ancestor_id) {
                 $crumbs[] = [
-                    'url' =>  Helper::get_bare_term_url($ancestor_id, $taxonomy),
+                    'url' => Helper::get_bare_term_url($ancestor_id, $taxonomy),
                     'name' => Helper::get_bare_title([
                         'id' => $ancestor_id,
                         'tax' => $taxonomy,
@@ -227,7 +219,7 @@ class Breadcrumbs
             }
 
             $crumbs[] = [
-                'url' =>  Helper::get_bare_term_url($primary_term_id, $taxonomy),
+                'url' => Helper::get_bare_term_url($primary_term_id, $taxonomy),
                 'name' => Helper::get_bare_title([
                     'id' => $primary_term_id,
                     'tax' => $taxonomy,
@@ -284,7 +276,7 @@ class Breadcrumbs
 
             foreach (array_reverse($ancestors) as $ancestor_id) {
                 $crumbs[] = [
-                    'url' =>  Helper::get_bare_term_url($ancestor_id, $taxonomy),
+                    'url' => Helper::get_bare_term_url($ancestor_id, $taxonomy),
                     'name' => Helper::get_bare_title([
                         'id' => $ancestor_id,
                         'tax' => $taxonomy,
@@ -293,7 +285,7 @@ class Breadcrumbs
             }
 
             $crumbs[] = [
-                'url' =>  Helper::get_bare_term_url($term_id, $taxonomy),
+                'url' => Helper::get_bare_term_url($term_id, $taxonomy),
                 'name' => Helper::get_bare_title([
                     'id' => $term_id,
                     'tax' => $taxonomy,
@@ -305,7 +297,7 @@ class Breadcrumbs
 
             foreach (array_reverse($ancestors) as $ancestor_id) {
                 $crumbs[] = [
-                    'url' =>  Helper::get_bare_term_url($ancestor_id, $taxonomy),
+                    'url' => Helper::get_bare_term_url($ancestor_id, $taxonomy),
                     'name' => Helper::get_bare_title([
                         'id' => $ancestor_id,
                         'tax' => $taxonomy,
@@ -314,7 +306,7 @@ class Breadcrumbs
             }
 
             $crumbs[] = [
-                'url' =>  Helper::get_bare_term_url(),
+                'url' => Helper::get_bare_term_url(),
                 'name' => Helper::get_bare_title(),
             ];
         }
@@ -481,5 +473,5 @@ class Breadcrumbs
             'name' => Helper::get_front_page_title(), // discrepancy
         ];
     }
-    
+
 }

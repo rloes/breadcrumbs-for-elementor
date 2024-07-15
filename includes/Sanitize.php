@@ -38,87 +38,6 @@ if (!defined('ABSPATH')) {
 class Sanitize {
 
     /**
-     * Sanitizes input to a boolean integer, i.e. 0, 1,
-     *
-     * Uses double casting. First, we cast to boolean, then to int.
-     *
-     * @since 2.2.2
-     * @since 2.8.0 Method is now public.
-     * @since 5.0.0 1. Moved from `\The_SEO_Framework\Load`.
-     *              2. Renamed from `s_one_zero`.
-     *
-     * @param mixed $value The value to cast to a boolean integer.
-     * @return int A boolean as a string (1 or 0)
-     */
-    public static function boolean_integer( $value ) {
-        return (int) (bool) $value;
-    }
-
-    /**
-     * Sanitizes input to a numeric string, like '0', '1', '2'.
-     *
-     * Uses double casting. First, we cast to integer, then to string.
-     * Rounds floats down. Converts non-numeric inputs to '0'.
-     *
-     * @since 3.0.0
-     * @since 5.0.0 1. Moved from `\The_SEO_Framework\Load`.
-     *              2. Renamed from `s_numeric_string`.
-     *
-     * @param mixed $value The value to cast to a numeric string.
-     * @return string An integer as string.
-     */
-    public static function numeric_string( $value ) {
-        return (string) (int) $value;
-    }
-
-    /**
-     * Sanitizes color hexadecimals to either 3 or 6 length: rgb or rrggbb.
-     * Removes leading hashtags.
-     * Makes the input lowercase.
-     *
-     * @since 2.8.0
-     * @since 5.0.0 1. Moved from `\The_SEO_Framework\Load`.
-     *              2. Renamed from `s_color_hex`.
-     *              3. Now accepts longer strings, and shortens them to the correct length.
-     *
-     * @param string $color String with potentially unwanted hex values.
-     * @return string The sanitized color hex.
-     */
-    public static function rgb_hex( $color ) {
-
-        preg_match(
-            '/^(?:[a-f\d]{3}){1,2}/i',
-            trim( $color, '# ' ),
-            $matches,
-        );
-
-        return strtolower( $matches[0] ?? '' );
-    }
-
-    /**
-     * Sanitizes color hexadecimals to either 3, 4, 6, or 8 length: rgb, rgba, rrggbb, rrggbbaa.
-     * Removes leading hashtags.
-     * Makes the input lowercase.
-     *
-     * @since 5.0.0
-     *
-     * @param string $color String with potentially unwanted hex values.
-     * @return string The sanitized color hex.
-     */
-    public static function rgba_hex( $color ) {
-
-        // If rgb, we must only get rgb[a], not rgb[aa].
-        // If rrggbb, we must only get rrggbb[aa], not rrggbb[a].
-        preg_match(
-            '/^(?:[a-f\d]{8}|[a-f\d]{6}|[a-f\d]{3,4})/i',
-            trim( $color, '# ' ),
-            $matches,
-        );
-
-        return strtolower( $matches[0] ?? '' );
-    }
-
-    /**
      * Sanitizes metadata content.
      * Returns single-line, trimmed text without duplicated spaces, nbsp, or tabs.
      * Also converts back-solidi to their respective HTML entities for non-destructive handling.
@@ -152,24 +71,6 @@ class Sanitize {
                     ),
                 ),
             ),
-        );
-    }
-
-    /**
-     * Normalizes metadata content for string comparison.
-     * The data returned is considered insecure.
-     *
-     * @since 5.0.0
-     *
-     * @param string $text The input text with possible repeated spacing.
-     * @return string The input string without repeated spaces.
-     */
-    public static function normalize_metadata_content_for_strcmp( $text ) {
-        // Why not blog_charset? Because blog_charset is there only to onboard non-UTF-8 to UTF-8.
-        return html_entity_decode(
-            static::metadata_content( $text ),
-            \ENT_QUOTES | \ENT_SUBSTITUTE | \ENT_HTML5,
-            'UTF-8',
         );
     }
 

@@ -293,7 +293,7 @@ class Query {
      * @since 4.0.6 Added a short-circuit on current-requests for `is_singular()`.
      * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
      *
-     * @param int|WP_Post|null $post (Optional) Post ID or post object.
+     * @param int|\WP_Post|null $post (Optional) Post ID or post object.
      * @return bool
      */
     public static function is_singular_archive( $post = null ) {
@@ -381,18 +381,6 @@ class Query {
         return false;
     }
 
-    /**
-     * Detects Term edit screen in WP Admin.
-     *
-     * @since 2.6.0
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     * @global \WP_Screen $current_screen
-     *
-     * @return bool True if on Term Edit screen. False otherwise.
-     */
-    public static function is_term_edit() {
-        return 'term' === ( $GLOBALS['current_screen']->base ?? '' );
-    }
 
     /**
      * Detects Post edit screen in WP Admin.
@@ -405,49 +393,6 @@ class Query {
      */
     public static function is_post_edit() {
         return 'post' === ( $GLOBALS['current_screen']->base ?? '' );
-    }
-
-    /**
-     * Detects Post or Archive Lists in Admin.
-     *
-     * @since 2.6.0
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     * @global \WP_Screen $current_screen
-     *
-     * @return bool We're on the edit screen.
-     */
-    public static function is_wp_lists_edit() {
-
-        switch ( $GLOBALS['current_screen']->base ?? '' ) {
-            case 'edit-tags':
-            case 'edit':
-                return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Detects Profile edit screen in WP Admin.
-     *
-     * @since 4.1.4
-     * @since 5.0.0 1. Now also tests network profile edit screens.
-     *              2. Moved from `\The_SEO_Framework\Load`.
-     * @global \WP_Screen $current_screen
-     *
-     * @return bool True if on Profile Edit screen. False otherwise.
-     */
-    public static function is_profile_edit() {
-
-        switch ( $GLOBALS['current_screen']->base ?? '' ) {
-            case 'profile':
-            case 'profile-network':
-            case 'user-edit':
-            case 'user-edit-network':
-                return true;
-        }
-
-        return false;
     }
 
     /**
@@ -479,7 +424,7 @@ class Query {
      * @since 5.0.3 1. Will no longer validate `0` as a plausible blog page.
      *              2. Will no longer validate `is_home()` when the blog page is not assigned.
      *
-     * @param int|WP_Post|null $post Optional. Post ID or post object.
+     * @param int|\WP_Post|null $post Optional. Post ID or post object.
      *                               Do not supply from WP_Query's main loop-query.
      * @return bool
      */
@@ -504,7 +449,7 @@ class Query {
      * @since 5.0.0 1. Renamed from `is_home_as_page()`.
      *              2. Moved from `\The_SEO_Framework\Load`.
      *
-     * @param int|WP_Post|null $post Optional. Post ID or post object.
+     * @param int|\WP_Post|null $post Optional. Post ID or post object.
      *                               Do not supply from WP_Query's main loop-query.
      * @return bool
      */
@@ -649,37 +594,6 @@ class Query {
     }
 
     /**
-     * Detects preview, securely.
-     *
-     * @since 2.6.0
-     * @since 4.0.0 This is now deemed a secure method.
-     *              1. Added is_user_logged_in() check.
-     *              2. Added is_singular() check, so get_the_id() won't cross with blog pages.
-     *              3. Added current_user_can() check.
-     *              4. Added wp_verify_nonce() check.
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     *
-     * @return bool
-     */
-    public static function is_preview() {
-
-        $is_preview = false;
-
-        if (
-            \is_preview()
-            && \is_user_logged_in()
-            && \is_singular()
-            && \current_user_can( 'edit_post', \get_the_id() )
-            && isset( $_GET['preview_id'], $_GET['preview_nonce'] )
-            && \wp_verify_nonce( $_GET['preview_nonce'], 'post_preview_' . (int) $_GET['preview_id'] )
-        ) {
-            $is_preview = true;
-        }
-
-        return $is_preview;
-    }
-
-    /**
      * Detects search.
      *
      * @since 2.6.0
@@ -690,48 +604,6 @@ class Query {
      */
     public static function is_search() {
         return \is_search() && ! \is_admin();
-    }
-
-    /**
-     * Detects single post pages.
-     * When $post is supplied, it will check against the current object. So it will not work in the admin screens.
-     *
-     * @since 2.6.0
-     * @since 4.0.0 Now tests for post type, which is more reliable.
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     * @uses The_SEO_Framework_Query::is_single_admin()
-     *
-     * @param int|string|array $post Optional. Post ID, title, slug, or array of such. Default empty.
-     * @return bool
-     */
-    public static function is_single( $post = '' ) {
-
-        if ( \is_admin() )
-            return static::is_single_admin();
-
-        return Cache::memo( null, $post )
-            ?? Cache::memo(
-                \is_int( $post ) || $post instanceof \WP_Post
-                    ? \in_array( \get_post_type( $post ), Helper::get_all_nonhierarchical(), true )
-                    : \is_single( $post ),
-                $post,
-            );
-    }
-
-    /**
-     * Detects posts within the admin area.
-     *
-     * @since 2.6.0
-     * @since 4.0.0 Now no longer returns true on categories and tags.
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     * @see The_SEO_Framework_Query::is_single()
-     *
-     * @return bool
-     */
-    public static function is_single_admin() {
-        // Checks for "is_singular_admin()" because the post type is non-hierarchical.
-        return static::is_singular_admin()
-            && \in_array( static::is_singular_admin(), Helper::get_all_nonhierarchical(), true );
     }
 
     /**
@@ -856,79 +728,6 @@ class Query {
     }
 
     /**
-     * Determines if the $post is a shop page.
-     *
-     * @since 4.0.5
-     * @since 4.1.4 Added memoization.
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     *
-     * @param int|WP_Post|null $post (Optional) Post ID or post object.
-     * @return bool
-     */
-    public static function is_shop( $post = null ) {
-        return Cache::memo( null, $post )
-            ?? Cache::memo(
-            /**
-             * @since 4.0.5
-             * @since 4.1.4 Now has its return value memoized.
-             * @param bool $is_shop Whether the post ID is a shop.
-             * @param int  $id      The current or supplied post ID.
-             */
-                (bool) \apply_filters( 'breadcrumbs_for_elementor_is_shop', false, $post ),
-                $post,
-            );
-    }
-
-    /**
-     * Determines if the page is a product page.
-     *
-     * @since 4.0.5
-     * @since 4.1.4 Added memoization.
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     *
-     * @param int|WP_Post|null $post (Optional) Post ID or post object.
-     * @return bool True if on a WooCommerce Product page.
-     */
-    public static function is_product( $post = null ) {
-
-        if ( \is_admin() )
-            return static::is_product_admin();
-
-        return Cache::memo( null, $post )
-            ?? Cache::memo(
-            /**
-             * @since 4.0.5
-             * @since 4.1.4 Now has its return value memoized.
-             * @param bool $is_product
-             * @param int|WP_Post|null $post (Optional) Post ID or post object.
-             */
-                (bool) \apply_filters( 'breadcrumbs_for_elementor_is_product', false, $post ),
-                $post,
-            );
-    }
-
-    /**
-     * Determines if the admin page is for a product page.
-     *
-     * @since 4.0.5
-     * @since 4.1.4 Added memoization.
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     *
-     * @return bool
-     */
-    public static function is_product_admin() {
-        return Cache::memo()
-            ?? Cache::memo(
-            /**
-             * @since 4.0.5
-             * @since 4.1.4 Now has its return value memoized.
-             * @param bool $is_product_admin
-             */
-                (bool) \apply_filters( 'breadcrumbs_for_elementor_is_product_admin', false )
-            );
-    }
-
-    /**
      * Determines if SSL is used.
      * Memoizes the return value.
      *
@@ -940,43 +739,6 @@ class Query {
     public static function is_ssl() {
         return Helper::umemo( __METHOD__ )
             ?? Helper::umemo( __METHOD__, \is_ssl() );
-    }
-
-    /**
-     * Checks the screen base file through global $page_hook or $_GET.
-     *
-     * NOTE: Usage of $pageslug might be insecure. Check all variables and don't
-     * perform lasting actions like saving to the database before `admin_init`!
-     *
-     * The second "insecure" parameter is actually secured by WordPress (read on...).
-     * However, we can't verify its integrity, WordPress has to. It's also checked
-     * against too late.
-     * It's secure enough for loading files; nevertheless, it shouldn't be used
-     * when passing sensitive data.
-     *
-     * @since 2.2.2
-     * @since 2.7.0 Added pageslug parameter.
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     * @global string $page_hook the current page hook.
-     *
-     * @param string $pagehook The menu pagehook to compare to.
-     *               To be used after `admin_init`.
-     * @param string $pageslug The menu page slug to compare to.
-     *               To be used before `admin_init`.
-     * @return bool true if screen match.
-     */
-    public static function is_menu_page( $pagehook = '', $pageslug = '' ) {
-        global $page_hook;
-
-        if ( isset( $page_hook ) ) {
-            return $page_hook === $pagehook;
-        } elseif ( \is_admin() && $pageslug ) {
-            // N.B. $_GET['page'] === $plugin_page after admin_init...
-            // phpcs:ignore, WordPress.Security.NonceVerification -- This is a public variable, no data is processed.
-            return ( $_GET['page'] ?? '' ) === $pageslug;
-        }
-
-        return false;
     }
 
     /**
@@ -1132,144 +894,5 @@ class Query {
      */
     public static function is_multipage() {
         return static::numpages() > 1;
-    }
-
-    /**
-     * Detects paginated comment pages thoroughly.
-     *
-     * WordPress 6.0 introduced a last minute function called `build_comment_query_vars_from_block()`.
-     * This function exists to workaround a bug in comment blocks as sub-query by adjusting the main query.
-     *
-     * @since 5.0.6
-     * @link <https://core.trac.wordpress.org/ticket/60806>
-     *
-     * @return bool
-     */
-    public static function is_comment_paged() {
-
-        // phpcs:ignore, WordPress.CodeAnalysis.AssignmentInCondition
-        if ( null !== $memo = Cache::memo() )
-            return $memo;
-
-        /**
-         * N.B. WordPress protects this query variable with options 'page_comments'
-         * and 'default_comments_page' via `redirect_canonical()`, so we don't have to.
-         * For reference, it fires `remove_query_arg( 'cpage', $redirect['query'] )`;
-         */
-        $is_cpaged = (int) \get_query_var( 'cpage', 0 ) > 0;
-
-        /**
-         * Let's scrutinize if $cpage might be incorrectly set.
-         *
-         * WP 6.0 bugged this. Any of these blocks can invoke `set_query_var( 'cpage', 1+ )`.
-         * 'core/comment-template',            // parent core/comments
-         * 'core/comments-pagination-next',    // parent core/comments-pagination, parent core/comments
-         * 'core/comments-pagination-numbers', // parent core/comments-pagination, parent core/comments
-         * 'core/comments-pagination-previous' doesn't invoke this; yet to be determined why.
-         *
-         * These functions can too invoke `set_query_var`; but Core doesn't mess this up:
-         * 'comments_template()'
-         * 'wp_list_comments()'  // But only after comments_template()
-         *
-         * If comments haven't yet been parsed, we can safely assume there's no bug active.
-         * Hence, we test for did_action(). We want the main query, not the tainted one.
-         * So, even if this runs in the footer, we should still scrutinize it.
-         */
-        if ( $is_cpaged && \did_action( 'parse_comment_query' ) ) {
-            // core/comments only works on singular; this bug doesn't invoke otherwise anyway.
-            if ( ! static::is_singular() )
-                return Cache::memo( false );
-
-            /**
-             * Assume 0 if the unaltered query variable isn't found;
-             * it might be purged, so we won't have pagination.
-             * There is no other fast+reliable method to determine whether
-             * comment pagination is engaged for the current query.
-             * This is a bypass, after all.
-             */
-            $is_cpaged = (int) ( $GLOBALS['wp_query']->query['cpage'] ?? 0 ) > 0;
-        }
-
-        return Cache::memo( $is_cpaged );
-    }
-
-    /**
-     * Determines whether we're on The SEO Framework's sitemap or not.
-     * Memoizes the return value once set.
-     *
-     * @since 2.9.2
-     * @since 4.0.0 Now memoizes instead of populating class properties.
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     *
-     * @param bool $set Whether to set "doing sitemap".
-     * @return bool
-     */
-    public static function is_sitemap( $set = false ) {
-        return Helper::umemo( __METHOD__, $set ?: null ) ?? false;
-    }
-
-    /**
-     * Returns the post author ID.
-     * Memoizes the return value for the current request.
-     *
-     * @since 3.0.0
-     * @since 3.2.2 1. Now no longer returns the latest post author ID on home-as-blog pages.
-     *              2. Now always returns an integer.
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     *
-     * @param int $post_id The post ID to fetch the author from. Leave 0 to autodetermine.
-     * @return int Post author ID on success, 0 on failure.
-     */
-    public static function get_post_author_id( $post_id = 0 ) {
-
-        // phpcs:ignore, WordPress.CodeAnalysis.AssignmentInCondition
-        if ( null !== $memo = Cache::memo( null, $post_id ) )
-            return $memo;
-
-        if ( $post_id || Query::is_singular() ) {
-            $post = \get_post( $post_id ?: Query::get_the_real_id() );
-
-            $author_id = isset( $post->post_author ) && \post_type_supports( $post->post_type, 'author' )
-                ? $post->post_author
-                : 0;
-        }
-
-        return Cache::memo( $author_id ?? 0, $post_id );
-    }
-
-    /**
-     * Sets up user ID and returns it if user is found.
-     * To be used in AJAX, back-end and front-end.
-     *
-     * @since 2.7.0
-     * @since 5.0.0 Moved from `\The_SEO_Framework\Load`.
-     *
-     * @return int The user ID. 0 if user is not found.
-     */
-    public static function get_current_user_id() {
-
-        // phpcs:ignore, WordPress.CodeAnalysis.AssignmentInCondition
-        if ( null !== $memo = Cache::memo() )
-            return $memo;
-
-        $user = \wp_get_current_user();
-
-        return Cache::memo( $user->exists() ? (int) $user->ID : 0 );
-    }
-
-    /**
-     * Detects if we're on a Gutenberg page.
-     *
-     * @since 3.1.0
-     * @since 3.2.0 1. Now detects the WP 5.0 block editor.
-     *              2. Method is now public.
-     * @since 5.0.0 1. Moved from `\The_SEO_Framework\Load`.
-     *              2. Renamed from `is_gutenberg_page`.
-     *              3. Now reads the current screen value.
-     *
-     * @return bool True if we're viewing the block editor (aka Gutenberg).
-     */
-    public static function is_block_editor() {
-        return $GLOBALS['current_screen']->is_block_editor ?? false;
     }
 }
