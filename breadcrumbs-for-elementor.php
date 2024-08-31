@@ -28,6 +28,7 @@ class Plugin
     private function __construct()
     {
         // Register the widget styles and scripts
+        $this->define_constants();
         $this->register_autoload();
         $this->load_textdomain();
         $this->add_hooks();
@@ -39,6 +40,11 @@ class Plugin
             self::$instance = new self();
         }
         return self::$instance;
+    }
+
+    private function define_constants()
+    {
+        define('BCFE_VERSION', '1.0.0');
     }
 
     public function add_hooks()
@@ -111,5 +117,5 @@ function breadcrumbs_for_elementor_maybe_initialize()
     }
 }
 
-add_action('plugins_loaded', 'breadcrumbs_for_elementor_maybe_initialize', 20);
+add_action('plugins_loaded', "BCFE\\breadcrumbs_for_elementor_maybe_initialize", 20);
 
