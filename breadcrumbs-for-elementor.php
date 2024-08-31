@@ -64,7 +64,7 @@ class Plugin
 
     public function register_assets()
     {
-        wp_register_style('elementor-breadcrumbs-widget-style', plugins_url('assets/css/breadcrumbs-widget.css', __FILE__));
+        wp_register_style('elementor-breadcrumbs-widget-style', plugins_url('assets/css/breadcrumbs-widget.css', __FILE__), false, BCFE_VERSION);
     }
 
     public function register_autoload()
