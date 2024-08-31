@@ -111,7 +111,7 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
         <#
         var show_homepage = settings.show_homepage === 'yes',
         title_homepage = settings.title_homepage,
-        crumbs = <?php echo json_encode($this->get_breadcrumbs()); ?>,
+        crumbs = <?php echo wp_json_encode($this->get_breadcrumbs()); ?>,
         isDividerIcon = settings.divider_icon_or_text === "icon",
         divider = isDividerIcon ?
         elementor.helpers.renderIcon(view, settings.divider_icon, { 'aria-hidden': true }, 'i', 'object') :
