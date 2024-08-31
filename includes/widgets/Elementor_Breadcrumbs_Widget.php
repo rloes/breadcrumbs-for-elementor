@@ -12,7 +12,7 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
 {
     protected function is_dynamic_content(): bool
     {
-        return false;
+        return true;
     }
 
     public function get_name()
@@ -52,12 +52,12 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
     protected function get_breadcrumbs(): array
     {
         $args = null;
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && isset($_POST["editor_post_id"])) {
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && (!empty($_POST["editor_post_id"]) || !empty($_POST["initial_document_id"]))) {
             $args = [
-                "id" => $_POST["editor_post_id"]
+                "id" => !empty($_POST["editor_post_id"]) ? $_POST["editor_post_id"] :$_POST["initial_document_id"],
             ];
         }
-        return defined('THE_SEO_FRAMEWORK_PRESENT') && false ?
+        return defined('THE_SEO_FRAMEWORK_PRESENT') ?
             \The_SEO_Framework\Meta\Breadcrumbs::get_breadcrumb_list($args)
             : Breadcrumbs::get_breadcrumb_list($args);
     }
@@ -81,8 +81,7 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
 
         $count = count($crumbs);
         if (!empty($crumbs)):?>
-            <nav class="breadcrumbs" aria-label="Breadcrumbs" data-crumbs="<?= esc_attr(json_encode($crumbs)) ?>"
-                 data-settings="<?= esc_attr(json_encode($settings)) ?>">
+            <nav class="breadcrumbs" aria-label="Breadcrumbs">
                 <ol>
                     <?php foreach ($crumbs as $i => $crumb): ?>
                         <li class="breadcrumbs-item">
@@ -123,7 +122,7 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
         }
 
         var count = crumbs.length;
-        if(count.length){ #>
+        if(count){ #>
             <nav class="breadcrumbs" aria-label="Breadcrumbs">
                 <ol>
                     <# for (let i = 0; i < count; i++) {
@@ -319,6 +318,61 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
 
         $this->end_controls_tabs();
 
+        $this->add_responsive_control(
+            'justify_content',
+            [
+                'label' => esc_html__('Justify Content', 'elementor'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'label_block' => true,
+                'default' => 'flex-start',
+                'options' => [
+                    'flex-start' => [
+                        'title' => esc_html__('Start', 'elementor'),
+                        'icon' => 'eicon-flex eicon-justify-start-h',
+                    ],
+                    'center' => [
+                        'title' => esc_html__('Center', 'elementor'),
+                        'icon' => 'eicon-flex eicon-justify-center-h',
+                    ],
+                    'flex-end' => [
+                        'title' => esc_html__('End', 'elementor'),
+                        'icon' => 'eicon-flex eicon-justify-end-h',
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}}' => '--breadcrumbs-for-elementor-justify-content: {{VALUE}};',
+                ],
+                'responsive' => true,
+            ]
+        );
+
+        $this->add_responsive_control(
+            'text_align',
+            [
+                'label' => esc_html__('Text Align', 'elementor'),
+                'type' => \Elementor\Controls_Manager::CHOOSE,
+                'label_block' => true,
+                'default' => 'left',
+                'options' => [
+                    'left' => [
+                        'title' => esc_html__('Left', 'elementor'),
+                        'icon' => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => esc_html__('Center', 'elementor'),
+                        'icon' => 'eicon-text-align-center',
+                    ],
+                    'right' => [
+                        'title' => esc_html__('Right', 'elementor'),
+                        'icon' => 'eicon-text-align-right',
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}}' => '--breadcrumbs-for-elementor-text-align: {{VALUE}};',
+                ],
+                'responsive' => true,
+            ]
+        );
 
         $this->add_responsive_control(
             'icon_size',
