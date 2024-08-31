@@ -86,13 +86,13 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
                     <?php foreach ($crumbs as $i => $crumb): ?>
                         <li class="breadcrumbs-item">
                             <?php if (($count - 1) === $i): ?>
-                                <span aria-current="page"><?= esc_html($crumb['name']); ?></span>
+                                <span aria-current="page"><?php echo esc_html($crumb['name']); ?></span>
                             <?php else: ?>
-                                <a href="<?= esc_url($crumb['url']); ?>"><?= esc_html($crumb['name']); ?></a>
+                                <a href="<?php echo esc_url($crumb['url']); ?>"><?php echo esc_html($crumb['name']); ?></a>
                                 <?php if ($is_divider_icon): ?>
                                     <?php \Elementor\Icons_Manager::render_icon($divider_icon, ['aria-hidden' => 'true']); ?>
                                 <?php else: ?>
-                                    <span class="divider-text"><?= esc_html($divider_text); ?></span>
+                                    <span class="divider-text"><?php echo esc_html($divider_text); ?></span>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </li>

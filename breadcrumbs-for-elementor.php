@@ -1,10 +1,11 @@
 <?php
 /**
  * Plugin Name: Breadcrumbs For Elementor
- * Description: A breadcrumb plugin for Elementor that utilizes the Singleton pattern.
+ * Description: A breadcrumb plugin for Elementor that uses the functions of The_SEO_Framework\
  * Version: 1.0.0
  * Author: Robin - Westsite
- * Requires PHP: 7.4
+ * Author URI: https://westsite-webdesign.de/
+ * Requires PHP: 8.0
  * Requires at least: 6.0
  * Text Domain: breadcrumbs-for-elementor
  * License: GPL v2 or later
@@ -49,6 +50,7 @@ class Plugin
 
     public function add_hooks()
     {
+        //TODO: add compatibility check for elementor see: https://developers.elementor.com/docs/addons/compatibility/
         add_action('init', [$this, "load_textdomain"]);
         add_action('wp_enqueue_scripts', [$this, "register_assets"]);
         add_action('elementor/widgets/widgets_registered', [$this, 'register_widgets']);
