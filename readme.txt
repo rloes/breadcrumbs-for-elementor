@@ -1,8 +1,8 @@
 === Breadcrumbs For Elementor ===
 Contributors: rloes
-Tags: elementor, breadcrumbs, navigation, widget, seo, search, engine
+Tags: elementor, breadcrumbs, navigation, widget, seo
 Requires at least: 6.0
-Tested up to: 6.4
+Tested up to: 6.6
 Stable tag: 1.0.0
 Requires PHP: 8.0
 License: GPLv2 or later

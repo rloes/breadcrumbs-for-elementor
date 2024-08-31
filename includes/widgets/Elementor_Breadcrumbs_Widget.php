@@ -53,8 +53,9 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
     {
         $args = null;
         if (\Elementor\Plugin::$instance->editor->is_edit_mode() && (!empty($_POST["editor_post_id"]) || !empty($_POST["initial_document_id"]))) {
-            $post_id_for_breadcrumbs = !empty($_POST["editor_post_id"]) ? $_POST["editor_post_id"] :$_POST["initial_document_id"];
-            $post_id_for_breadcrumbs = sanitize_key(wp_unslash($post_id_for_breadcrumbs));
+            $editor_post_id = isset($_POST["editor_post_id"]) ? sanitize_key(wp_unslash($_POST["editor_post_id"])) : '';
+            $initial_document_id = isset($_POST["initial_document_id"]) ? sanitize_key(wp_unslash($_POST["initial_document_id"])) : '';
+            $post_id_for_breadcrumbs = !empty($editor_post_id) ? $editor_post_id : $initial_document_id;
             $args = [
                 "id" => $post_id_for_breadcrumbs,
             ];
