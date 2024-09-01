@@ -28,7 +28,6 @@ class Plugin
 
     private function __construct()
     {
-        // Register the widget styles and scripts
         $this->define_constants();
         $this->register_autoload();
         $this->load_textdomain();
@@ -64,12 +63,11 @@ class Plugin
 
     public function register_assets()
     {
-        wp_register_style('elementor-breadcrumbs-widget-style', plugins_url('assets/css/breadcrumbs-widget.css', __FILE__), false, BCFE_VERSION);
+        wp_register_style('breadcrumbs-for-elementor-widget-styles', plugins_url('assets/css/breadcrumbs-widget.css', __FILE__), false, BCFE_VERSION);
     }
 
     public function register_autoload()
     {
-        // Custom autoloader
         spl_autoload_register(function ($class) {
             // Project-specific namespace prefix
             $prefix = 'BCFE\\';

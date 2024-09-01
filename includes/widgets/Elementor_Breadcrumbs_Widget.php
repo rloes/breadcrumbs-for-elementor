@@ -37,7 +37,7 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
 
     public function get_style_depends()
     {
-        return ['elementor-breadcrumbs-widget-style'];
+        return ['breadcrumbs-for-elementor-widget-styles'];
     }
 
     protected function register_controls()
@@ -52,9 +52,10 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
     protected function get_breadcrumbs(): array
     {
         $args = null;
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && (!empty($_POST["editor_post_id"]) || !empty($_POST["initial_document_id"]))) {
-            $editor_post_id = isset($_POST["editor_post_id"]) ? sanitize_key(wp_unslash($_POST["editor_post_id"])) : '';
-            $initial_document_id = isset($_POST["initial_document_id"]) ? sanitize_key(wp_unslash($_POST["initial_document_id"])) : '';
+        //in editor, especially when changing document without full page reload, the relevant post id is in editor_post_id or initial_document_id
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && (!empty($_POST["editor_post_id"]) || !empty($_POST["initial_document_id"]))) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            $editor_post_id = isset($_POST["editor_post_id"]) ? sanitize_key(wp_unslash($_POST["editor_post_id"])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            $initial_document_id = isset($_POST["initial_document_id"]) ? sanitize_key(wp_unslash($_POST["initial_document_id"])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
             $post_id_for_breadcrumbs = !empty($editor_post_id) ? $editor_post_id : $initial_document_id;
             $args = [
                 "id" => $post_id_for_breadcrumbs,
@@ -157,14 +158,14 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
         $this->start_controls_section(
             'section_content',
             [
-                'label' => esc_html__('Content', 'breadcrumbs-for-elementor'),
+                'label' => esc_html__('Content', 'elementor'),
             ]
         );
 
         $this->add_control(
             'show_homepage',
             [
-                'label' => esc_html__('Show Homepage', 'breadcrumbs-for-elementor'),
+                'label' => esc_html__('Show Home', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
                 'label_on' => esc_html__('Show', 'elementor'),
                 'label_off' => esc_html__('Hide', 'elementor'),
@@ -220,7 +221,7 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
         $this->add_control(
             'divider_text',
             [
-                'label' => esc_html__('Divider Icon', 'breadcrumbs-for-elementor'),
+                'label' => esc_html__('Divider Text', 'breadcrumbs-for-elementor'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => ">",
                 'placeholder' => esc_html__('Text displayed between breadcrumb items', 'breadcrumbs-for-elementor'),
@@ -240,7 +241,7 @@ class Elementor_Breadcrumbs_Widget extends \Elementor\Widget_Base
         $this->start_controls_section(
             'section_style',
             [
-                'label' => esc_html__('Style', 'breadcrumbs-for-elementor'),
+                'label' => esc_html__('Style', 'elementor'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
             ]
         );
