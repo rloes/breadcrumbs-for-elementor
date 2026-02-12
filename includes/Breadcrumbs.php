@@ -1,7 +1,11 @@
 <?php
 /**
- * @package The_SEO_Framework\Classes\Meta
- * @subpackage The_SEO_Framework\Meta\Breadcrumb
+ *
+ * This file is derived from The SEO Framework plugin.
+ * Original source: https://de.wordpress.org/plugins/autodescription/
+ *
+ * @package Breadcrumbs_For_Elementor
+ * @license GPL-2.0-or-later
  */
 
 namespace BCFE;
@@ -9,6 +13,7 @@ namespace BCFE;
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
+
 /**
  * The SEO Framework plugin
  * Copyright (C) 2023 - 2024 Sybre Waaijer, CyberWire B.V. (https://cyberwire.nl/)
