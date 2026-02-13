@@ -3,8 +3,8 @@
  * Plugin Name: Breadcrumbs For Elementor
  * Description: A breadcrumb plugin for Elementor that uses the functions of The_SEO_Framework\
  * Version: 1.0.0
- * Author: Robin - Westsite
- * Author URI: https://westsite-webdesign.de/
+ * Author: ZWEID
+ * Author URI: https://zweid.net/
  * Requires PHP: 8.0
  * Requires at least: 6.0
  * Text Domain: breadcrumbs-for-elementor
@@ -14,8 +14,6 @@
  */
 
 namespace BCFE;
-
-use function Sodium\add;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
